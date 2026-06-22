@@ -9,14 +9,14 @@ import (
 
 func TestTodoListModel(t *testing.T) {
 	todo := domain.TodoList{
-		ID:           1,
+		ID:           "todo-id-1",
 		Titre:        "Apprendre Go",
 		DateCreation: "2026-06-17",
 		DateEcheance: "2026-06-20",
 		Completer:    false,
 	}
 
-	assert.Equal(t, 1, todo.ID)
+	assert.Equal(t, "todo-id-1", todo.ID)
 	assert.Equal(t, "Apprendre Go", todo.Titre)
 	assert.Equal(t, "2026-06-17", todo.DateCreation)
 	assert.Equal(t, "2026-06-20", todo.DateEcheance)

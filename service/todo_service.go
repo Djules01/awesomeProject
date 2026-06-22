@@ -1,22 +1,23 @@
 package service
 
 import (
-	"awesomeProject/domain"
 	"errors"
+	"fmt"
+	"awesomeProject/domain"
 )
 
 type TodoService interface {
 	CreateTodo(todo domain.TodoList) (domain.TodoList, error)
 	GetTodoByDate() ([]domain.TodoList, error)
-	UpdateTodo(id int, todo domain.TodoList) (domain.TodoList, bool, error)
-	DeleteTodo(id int) (bool, error)
+	UpdateTodo(id string, todo domain.TodoList) (domain.TodoList, bool, error)
+	DeleteTodo(id string) (bool, error)
 }
 
 type TodoRepository interface {
 	Create(todo domain.TodoList) (domain.TodoList, error)
 	DisplayByDate() ([]domain.TodoList, error)
-	Update(id int, todo domain.TodoList) (domain.TodoList, bool, error)
-	Delete(id int) (bool, error)
+	Update(id string, todo domain.TodoList) (domain.TodoList, bool, error)
+	Delete(id string) (bool, error)
 }
 
 type todoService struct {
@@ -40,18 +41,31 @@ func (s *todoService) CreateTodo(todo domain.TodoList) (domain.TodoList, error) 
 		return domain.TodoList{}, errors.New("Veuillez rentrer une échéance")
 	}
 
-	return s.repo.Create(todo)
-
+	todo, err := s.repo.Create(todo)
+	if err != nil {
+		return domain.TodoList{}, fmt.Errorf("erreur lors de la création")
+	}
+	return todo, nil
 }
 
 func (s *todoService) GetTodoByDate() ([]domain.TodoList, error) {
 	return s.repo.DisplayByDate()
 }
 
-func (s *todoService) UpdateTodo(id int, todo domain.TodoList) (domain.TodoList, bool, error) {
+func (s *todoService) UpdateTodo(id string, todo domain.TodoList) (domain.TodoList, bool, error) {
+	if todo.Titre == "" {
+		return domain.TodoList{}, false, errors.New("le titre est obligatoire")
+	}
+	if todo.DateEcheance == "" {
+		return domain.TodoList{}, false, errors.New("Veuillez rentrer une échéance")
+	}
 	return s.repo.Update(id, todo)
 }
 
-func (s *todoService) DeleteTodo(id int) (bool, error) {
-	return s.repo.Delete(id)
+	func (s *todoService) DeleteTodo(id string) (bool, error) {
+		ok, err := s.repo.Delete(id)
+		if err != nil {
+			return false, fmt.Errorf("erreur lors de la suppression")
+		}
+		return ok, nil
 }

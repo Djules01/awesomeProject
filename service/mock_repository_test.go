@@ -20,12 +20,12 @@ func (m *MockTodoRepository) DisplayByDate() ([]domain.TodoList, error) {
 	return args.Get(0).([]domain.TodoList), args.Error(1)
 }
 
-func (m *MockTodoRepository) Update(id int, todo domain.TodoList) (domain.TodoList, bool, error) {
+func (m *MockTodoRepository) Update(id string, todo domain.TodoList) (domain.TodoList, bool, error) {
 	args := m.Called(id, todo)
 	return args.Get(0).(domain.TodoList), args.Bool(1), args.Error(2)
 }
 
-func (m *MockTodoRepository) Delete(id int) (bool, error) {
+func (m *MockTodoRepository) Delete(id string) (bool, error) {
 	args := m.Called(id)
 	return args.Bool(0), args.Error(1)
 }

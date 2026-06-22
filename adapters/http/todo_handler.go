@@ -1,10 +1,10 @@
 package httpadapter
 
 import (
-	"awesomeProject/domain"
 	"encoding/json"
 	"net/http"
-	"strconv"
+
+	"awesomeProject/domain"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -46,7 +46,7 @@ func (h *Handler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetTodosByDate(w http.ResponseWriter, r *http.Request) {
 	todos, err := h.Service.GetTodoByDate()
 	if err != nil {
-		http.Error(w, "Erreur SQL", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -55,15 +55,15 @@ func (h *Handler) GetTodosByDate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
-	if err != nil {
+	id := chi.URLParam(r, "id")
+	if id == "" {
 		http.Error(w, "ID invalide", http.StatusBadRequest)
 		return
 	}
 
 	var input domain.TodoList
 
-	err = json.NewDecoder(r.Body).Decode(&input)
+	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		http.Error(w, "JSON invalide", http.StatusBadRequest)
 		return
@@ -85,15 +85,15 @@ func (h *Handler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
-	if err != nil {
+	id := chi.URLParam(r, "id")
+	if id == "" {
 		http.Error(w, "ID invalide", http.StatusBadRequest)
 		return
 	}
 
 	ok, err := h.Service.DeleteTodo(id)
 	if err != nil {
-		http.Error(w, "Erreur SQL", http.StatusInternalServerError)
+		http.Error(w, "Erreur lors de la suppression", http.StatusInternalServerError)
 		return
 	}
 

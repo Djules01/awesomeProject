@@ -1,0 +1,24 @@
+services:
+  todolist-api:
+    build: .
+    container_name: todolist-go
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      API_KEY: humancraft
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: todolist
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7
+    container_name: todolist-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
