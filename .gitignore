@@ -1,0 +1,7 @@
+.idea/
+*.exe
+*.test
+*.out
+todos.db
+*.db
+.env
