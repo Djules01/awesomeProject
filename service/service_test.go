@@ -1,9 +1,10 @@
 package service
 
 import (
-	"awesomeProject/domain"
 	"errors"
 	"testing"
+
+	"awesomeProject/domain"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -19,7 +20,7 @@ func TestCreateTodoSuccess(t *testing.T) {
 	}
 
 	expected := input
-	expected.ID = 1
+	expected.ID = "todo-id-1"
 
 	mockRepo.On("Create", input).Return(expected, nil)
 
@@ -96,7 +97,8 @@ func TestCreateTodoRepositoryError(t *testing.T) {
 
 	result, err := todoService.CreateTodo(input)
 
-	assert.ErrorIs(t, err, expectedErr)
+	assert.Error(t, err)
+	assert.Equal(t, "erreur lors de la création", err.Error())
 	assert.Equal(t, domain.TodoList{}, result)
 	mockRepo.AssertExpectations(t)
 }
@@ -107,7 +109,7 @@ func TestGetTodoByDateSuccess(t *testing.T) {
 
 	expected := []domain.TodoList{
 		{
-			ID:           1,
+			ID:           "todo-id-1",
 			Titre:        "Tester service",
 			DateCreation: "2026-06-18",
 			DateEcheance: "2026-06-25",
@@ -127,6 +129,8 @@ func TestUpdateTodoSuccess(t *testing.T) {
 	mockRepo := new(MockTodoRepository)
 	todoService := NewService(mockRepo)
 
+	id := "todo-id-1"
+
 	input := domain.TodoList{
 		Titre:        "Todo modifiee",
 		DateCreation: "2026-06-18",
@@ -135,11 +139,11 @@ func TestUpdateTodoSuccess(t *testing.T) {
 	}
 
 	expected := input
-	expected.ID = 1
+	expected.ID = id
 
-	mockRepo.On("Update", 1, input).Return(expected, true, nil)
+	mockRepo.On("Update", id, input).Return(expected, true, nil)
 
-	result, ok, err := todoService.UpdateTodo(1, input)
+	result, ok, err := todoService.UpdateTodo(id, input)
 
 	assert.NoError(t, err)
 	assert.True(t, ok)
@@ -151,9 +155,11 @@ func TestDeleteTodoSuccess(t *testing.T) {
 	mockRepo := new(MockTodoRepository)
 	todoService := NewService(mockRepo)
 
-	mockRepo.On("Delete", 1).Return(true, nil)
+	id := "todo-id-1"
 
-	ok, err := todoService.DeleteTodo(1)
+	mockRepo.On("Delete", id).Return(true, nil)
+
+	ok, err := todoService.DeleteTodo(id)
 
 	assert.NoError(t, err)
 	assert.True(t, ok)
